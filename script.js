@@ -44,36 +44,62 @@ document.addEventListener("DOMContentLoaded", () => {
             const imgWrapper = document.createElement("div");
             imgWrapper.className = "image-wrapper";
 
-            let mediaEl;
-            // Erkennt jetzt MP4 und MOV automatisch für das Cover-Bild
-            const coverLower = project.cover.toLowerCase();
-            const isVideo = coverLower.endsWith('.mp4') || coverLower.endsWith('.mov');
-
-            if (isVideo) {
-                mediaEl = document.createElement("video");
-                mediaEl.src = project.cover;
-                mediaEl.muted = true; // Stumm beim Hover
-                mediaEl.loop = true;
-                mediaEl.playsInline = true;
-                
-                projectLink.addEventListener('mouseenter', () => mediaEl.play());
-                projectLink.addEventListener('mouseleave', () => mediaEl.pause());
-            } else {
-                mediaEl = document.createElement("img");
-                mediaEl.src = project.cover;
-                mediaEl.loading = "lazy";
-            }
-            
-            mediaEl.alt = project.name;
-
             const hoverTitle = document.createElement("div");
             hoverTitle.className = "hover-title";
             hoverTitle.innerText = project.name;
 
-            imgWrapper.appendChild(mediaEl);
             projectLink.appendChild(imgWrapper);
             projectLink.appendChild(hoverTitle);
             projectGrid.appendChild(projectLink);
+
+            // --- NEU: Dynamische Suche auch für das Cover! ---
+            const extensionsToTry = ['.jpg', '.JPG', '.jpeg', '.png', '.PNG', '.mp4', '.MP4', '.mov', '.MOV'];
+            
+            function autoLoadCover(extIndex) {
+                if (extIndex >= extensionsToTry.length) return; // Stoppt, wenn kein Cover gefunden wurde
+
+                const folderPath = `images/projekt${parseInt(project.id)}/`;
+                const ext = extensionsToTry[extIndex];
+                const mediaUrl = `${folderPath}cover${ext}`;
+                const isVideo = ext.toLowerCase() === '.mp4' || ext.toLowerCase() === '.mov';
+                
+                if (isVideo) {
+                    const testVid = document.createElement("video");
+                    
+                    testVid.onloadeddata = function() {
+                        testVid.muted = true; 
+                        testVid.loop = true;
+                        testVid.playsInline = true;
+                        
+                        projectLink.addEventListener('mouseenter', () => testVid.play());
+                        projectLink.addEventListener('mouseleave', () => testVid.pause());
+                        
+                        imgWrapper.appendChild(testVid);
+                    };
+                    
+                    testVid.onerror = function() {
+                        autoLoadCover(extIndex + 1);
+                    };
+                    
+                    testVid.src = mediaUrl;
+                    testVid.load(); 
+                } else {
+                    const testImg = new Image();
+                    
+                    testImg.onload = function() {
+                        testImg.loading = "lazy";
+                        imgWrapper.appendChild(testImg);
+                    };
+                    
+                    testImg.onerror = function() {
+                        autoLoadCover(extIndex + 1);
+                    };
+                    
+                    testImg.src = mediaUrl;
+                }
+            }
+
+            autoLoadCover(0); // Starte die Cover-Suche
         });
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -110,8 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let imgIndex = 1;
             let loadedMedia = []; 
-            // Hier ist die Checkliste der Dateiendungen
-            const extensionsToTry = ['.jpg', '.png', '.mp4', '.mov'];
+            const extensionsToTry = ['.jpg', '.JPG', '.jpeg', '.png', '.PNG', '.mp4', '.MP4', '.mov', '.MOV'];
 
             function addMediaToDOM(url, type) {
                 let mediaEl;
@@ -119,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     mediaEl = document.createElement("img");
                 } else {
                     mediaEl = document.createElement("video");
-                    mediaEl.muted = true; // Stumm im Slider-Preview
+                    mediaEl.muted = true; 
                     mediaEl.loop = true;
                     mediaEl.playsInline = true;
                     
@@ -134,11 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadedMedia.push({ src: url, type: type }); 
                 
                 imgIndex++;
-                autoLoadMedia(0); // Starte für das nächste Bild wieder bei Index 0 (.jpg)
+                autoLoadMedia(0); 
             }
 
             function autoLoadMedia(extIndex) {
-                // Wenn wir alle 4 Endungen probiert haben und nichts da ist, sind wir fertig!
                 if (extIndex >= extensionsToTry.length) {
                     if (loadedMedia.length > 0) {
                         initLightbox(loadedMedia);
@@ -151,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const folderPath = `images/projekt${parseInt(currentProject.id)}/`;
                 const ext = extensionsToTry[extIndex];
                 const mediaUrl = `${folderPath}${imgIndex}${ext}`;
-                const isVideo = ext === '.mp4' || ext === '.mov';
+                const isVideo = ext.toLowerCase() === '.mp4' || ext.toLowerCase() === '.mov';
                 
                 if (isVideo) {
                     const testVid = document.createElement("video");
@@ -161,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                     
                     testVid.onerror = function() {
-                        // Bei Fehler: Probiere die nächste Dateiendung in der Liste
                         autoLoadMedia(extIndex + 1);
                     };
                     
@@ -175,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                     
                     testImg.onerror = function() {
-                        // Bei Fehler: Probiere die nächste Dateiendung in der Liste
                         autoLoadMedia(extIndex + 1);
                     };
                     
@@ -183,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Starte die Suche für das 1. Bild bei der 1. Endung (.jpg)
             autoLoadMedia(0);
 
         } else {
@@ -228,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 lightboxVid.src = currentMedia.src;
                 lightboxVid.style.display = "block";
                 
-                // Ton wird in der großen Ansicht aktiviert
                 lightboxVid.muted = false; 
                 lightboxVid.volume = 0.8; 
                 
