@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>work by anna kreil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="main-logo">
+            <a href="index.html?hero=skip">anna kreil</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html?hero=skip">work</a></li>
+                <li><a href="#" class="contact-trigger">contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="project-detail-container">
+        <div class="project-info">
+            <h1 id="project-title"></h1>
+            <p id="project-desc"></p>
+        </div>
+
+        <div class="slider-section">
+            <div class="slider-wrapper" id="slider-wrapper">
+                <div class="slider" id="project-slider">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <button class="lightbox-prev">&#10094;</button>
+        <img id="lightbox-img" src="" alt="fullscreen preview">
+        <video id="lightbox-vid" src="" controls loop playsinline></video>
+        <button class="lightbox-next">&#10095;</button>
+    </div>
+
+    <div id="contact-modal" class="contact-modal">
+        <div class="contact-deadzone">
+            <a href="mailto:hello@annakreil.com" class="contact-email-text">hello@annakreil.com</a>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
