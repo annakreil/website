@@ -191,29 +191,35 @@ nav a:hover, nav a.active {
 .project-info h1 {
     font-size: 2.5rem;
     font-weight: 400;
-    margin-bottom: 35px; /* Abstand zum Fließtext deutlich vergrößert */
+    margin-bottom: 35px; /* Abstand zum Fließtext */
 }
 
-.project-text {
+/* --- Exakt gleicher Style für Fließtext und Credits --- */
+.project-text, 
+.project-meta .meta-line {
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.95rem;
+    font-weight: 400;
     line-height: 1.7;
     opacity: 0.8;
-    margin-bottom: 30px; /* Abstand vor den Credits */
+    color: var(--color-brown);
 }
 
-.project-credits {
-    font-size: 0.95rem; /* Exakt wie Fließtext */
-    line-height: 1.7;   /* Exakt wie Fließtext */
-    opacity: 0.8;       /* Exakt wie Fließtext */
-    margin-bottom: 0px; 
+.project-divider {
+    border: none;
+    border-top: 1px solid rgba(158, 127, 101, 0.3); /* Dezenter brauner Strich */
+    margin: 30px 0; /* Abstand über und unter dem Strich */
+    width: 100%;
 }
 
-.project-roles {
-    font-size: 0.95rem; /* Exakt wie Fließtext */
-    line-height: 1.7;   /* Exakt wie Fließtext */
-    font-weight: 400;
-    opacity: 0.8;       /* Exakt wie Fließtext */
-    margin-bottom: 25px;
+.project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Naher Abstand zwischen den einzelnen Credit-Zeilen */
+}
+
+.project-meta .meta-heading {
+    margin-bottom: 10px; /* Etwas mehr Luft unter dem Wort "credits" */
 }
 
 /* --- Horizontaler Galerie Slider --- */
