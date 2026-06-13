@@ -142,13 +142,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentProject = projects.find(p => p.id === projectId);
 
         if (currentProject) {
+            
+            // Text-Block zusammenbauen
             let textHTML = currentProject.text ? `<div class="project-text">${currentProject.text}</div>` : '';
             
+            // Credits-Block mit Divider zusammenbauen
+            let creditsHTML = '';
+            if (currentProject.credits || currentProject.roles) {
+                creditsHTML = `
+                <hr class="project-divider">
+                <div class="project-meta">
+                    <div class="meta-line meta-heading">credits</div>
+                    <div class="meta-line">${currentProject.credits}</div>
+                    <div class="meta-line">${currentProject.roles}</div>
+                </div>
+                `;
+            }
+
+            // Ins HTML injizieren
             projectInfoContainer.innerHTML = `
                 <h1>${currentProject.name}</h1>
                 ${textHTML}
-                <div class="project-credits">${currentProject.credits}</div>
-                <div class="project-roles">${currentProject.roles}</div>
+                ${creditsHTML}
             `;
             
             document.title = `${currentProject.name} — work by anna kreil`;
