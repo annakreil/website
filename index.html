@@ -14,15 +14,20 @@
     <div id="opening-screen">
         <div class="opening-logo" id="typewriter-text"></div>
     </div>
-
+    <!-- Password Overlay
+    <div id="password-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--color-cream); z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <input type="password" id="pw-input" placeholder="password" style="background: transparent; border: none; border-bottom: 1px solid var(--color-brown); color: var(--color-brown); font-family: 'Montserrat', sans-serif; font-size: 1rem; padding: 10px; text-align: center; outline: none; margin-bottom: 20px;">
+        <button id="pw-submit" style="background: transparent; border: none; font-family: 'Montserrat', sans-serif; color: var(--color-brown); cursor: pointer; opacity: 0.6; transition: opacity 0.3s;">enter</button>
+        <p id="pw-error" style="color: red; font-size: 0.8rem; opacity: 0; margin-top: 10px;">incorrect password</p>
+    </div> -->
     <header>
         <div class="main-logo">
             <a href="index.html">anna kreil</a>
         </div>
-        <nav>
+       <nav>
             <ul>
-                <li><a href="index.html" class="active">work</a></li>
-                <!-- <li><a href="#" class="contact-trigger">contact</a></li> -->
+                <li><a href="index.html?hero=skip">work</a></li>
+                <li><a href="about.html">about</a></li>
             </ul>
         </nav>
     </header>
@@ -32,11 +37,18 @@
             </div>
     </main>
 
+    <!-- Footer -->
+    <footer>
+        <a href="imprint.html">imprint</a>
+        <a href="privacy.html">privacy</a>
+        <span>© anna kreil</span>
+    </footer>
+
     <div id="contact-modal" class="contact-modal">
         <div class="contact-deadzone">
             <!-- <a href="mailto:hello@annakreil.com" class="contact-email-text">hello@annakreil.com</a> -->
         </div>
-    </div>
+    </div> 
 
     <script src="data.js"></script>
     <script src="script.js"></script>
