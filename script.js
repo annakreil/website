@@ -142,11 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentProject = projects.find(p => p.id === projectId);
 
         if (currentProject) {
+            let textHTML = currentProject.text ? `<div class="project-text">${currentProject.text}</div>` : '';
+            
             projectInfoContainer.innerHTML = `
                 <h1>${currentProject.name}</h1>
-                <div class="project-roles">${currentProject.roles}</div>
-                <div class="project-text">${currentProject.text}</div>
+                ${textHTML}
                 <div class="project-credits">${currentProject.credits}</div>
+                <div class="project-roles">${currentProject.roles}</div>
             `;
             
             document.title = `${currentProject.name} — work by anna kreil`;
