@@ -194,24 +194,25 @@ nav a:hover, nav a.active {
     margin-bottom: 5px;
 }
 
-.project-roles {
-    font-size: 0.85rem;
-    font-weight: 400;
-    opacity: 0.6;
-    margin-bottom: 25px;
-}
-
 .project-text {
     font-size: 0.95rem;
     line-height: 1.7;
     opacity: 0.8;
-    margin-bottom: 20px;
+    margin-bottom: 25px; /* Abstand zu den Credits darunter */
 }
 
 .project-credits {
-    font-size: 0.8rem;
+    font-size: 0.95rem; /* Gleiche Größe wie der Text */
     line-height: 1.5;
     opacity: 0.5;
+    margin-bottom: 5px; /* Kleiner Abstand zu den Roles */
+}
+
+.project-roles {
+    font-size: 0.95rem; /* Gleiche Größe wie der Text */
+    font-weight: 400;
+    opacity: 0.6;
+    margin-bottom: 25px;
 }
 
 /* --- Horizontaler Galerie Slider --- */
