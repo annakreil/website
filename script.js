@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- 2. Home Screen (Grid Logic & Scroll Reveal) ---
+    // --- 2. Home Screen (Grid Logic & Hover Preloading) ---
     const projectGrid = document.getElementById("project-grid");
     if (projectGrid && typeof projects !== "undefined") {
         projects.forEach((project, index) => {
@@ -52,11 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
             projectLink.appendChild(hoverTitle);
             projectGrid.appendChild(projectLink);
 
-            // --- NEU: Dynamische Suche auch für das Cover! ---
             const extensionsToTry = ['.jpg', '.JPG', '.jpeg', '.png', '.PNG', '.mp4', '.MP4', '.mov', '.MOV'];
             
             function autoLoadCover(extIndex) {
-                if (extIndex >= extensionsToTry.length) return; // Stoppt, wenn kein Cover gefunden wurde
+                if (extIndex >= extensionsToTry.length) return; 
 
                 const folderPath = `images/projekt${parseInt(project.id)}/`;
                 const ext = extensionsToTry[extIndex];
@@ -77,10 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         imgWrapper.appendChild(testVid);
                     };
                     
-                    testVid.onerror = function() {
-                        autoLoadCover(extIndex + 1);
-                    };
-                    
+                    testVid.onerror = function() { autoLoadCover(extIndex + 1); };
                     testVid.src = mediaUrl;
                     testVid.load(); 
                 } else {
@@ -91,15 +87,29 @@ document.addEventListener("DOMContentLoaded", () => {
                         imgWrapper.appendChild(testImg);
                     };
                     
-                    testImg.onerror = function() {
-                        autoLoadCover(extIndex + 1);
-                    };
-                    
+                    testImg.onerror = function() { autoLoadCover(extIndex + 1); };
                     testImg.src = mediaUrl;
                 }
             }
 
-            autoLoadCover(0); // Starte die Cover-Suche
+            autoLoadCover(0);
+
+            // --- NEU: PRELOAD ON HOVER ---
+            // Fährt man über das Projekt, lädt er heimlich schon "1.jpg" oder "1.mp4" vor
+            let preloaded = false;
+            projectLink.addEventListener('mouseenter', () => {
+                if (preloaded) return;
+                preloaded = true;
+                const folderPath = `images/projekt${parseInt(project.id)}/`;
+                // Versuch blind, die häufigsten Formate des ersten Bildes in den Cache zu laden
+                ['.jpg', '.png', '.mp4'].forEach(ext => {
+                    const link = document.createElement("link");
+                    link.rel = "preload";
+                    link.as = ext === '.mp4' ? "video" : "image";
+                    link.href = `${folderPath}1${ext}`;
+                    document.head.appendChild(link);
+                });
+            });
         });
 
         const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -109,17 +119,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     observer.unobserve(entry.target); 
                 }
             });
-        }, {
-            threshold: 0.1, 
-            rootMargin: "0px 0px -50px 0px" 
-        });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
         document.querySelectorAll('.project-item').forEach(item => {
             revealObserver.observe(item);
         });
     }
 
-    // --- 3. Project Detail Page Logic (JPG, PNG, MP4, MOV BILDERSUCHE) ---
+    // --- 3. Project Detail Page Logic (TURBO PARALLEL BILDERSUCHE) ---
     const titleEl = document.getElementById("project-title");
     const descEl = document.getElementById("project-desc");
     const sliderEl = document.getElementById("project-slider");
@@ -134,78 +141,72 @@ document.addEventListener("DOMContentLoaded", () => {
             descEl.innerText = currentProject.description;
             document.title = `${currentProject.name} — work by anna kreil`;
 
-            let imgIndex = 1;
             let loadedMedia = []; 
             const extensionsToTry = ['.jpg', '.JPG', '.jpeg', '.png', '.PNG', '.mp4', '.MP4', '.mov', '.MOV'];
 
-            function addMediaToDOM(url, type) {
+            function addMediaToDOM(url, type, index) {
                 let mediaEl;
                 if (type === 'image') {
                     mediaEl = document.createElement("img");
+                    mediaEl.loading = "eager"; // Zwingt den Browser, es sofort zu laden
                 } else {
                     mediaEl = document.createElement("video");
                     mediaEl.muted = true; 
                     mediaEl.loop = true;
                     mediaEl.playsInline = true;
+                    mediaEl.preload = "auto"; // Zwingt das Video zum sofortigen Download
                     
                     mediaEl.addEventListener('mouseenter', () => mediaEl.play());
                     mediaEl.addEventListener('mouseleave', () => mediaEl.pause());
                 }
                 
                 mediaEl.src = url;
-                mediaEl.dataset.index = imgIndex - 1; 
+                mediaEl.dataset.index = index; 
                 sliderEl.appendChild(mediaEl);
-                
                 loadedMedia.push({ src: url, type: type }); 
-                
-                imgIndex++;
-                autoLoadMedia(0); 
             }
 
-            function autoLoadMedia(extIndex) {
-                if (extIndex >= extensionsToTry.length) {
-                    if (loadedMedia.length > 0) {
-                        initLightbox(loadedMedia);
-                    } else {
-                        sliderEl.innerHTML = "<p>keine medien für dieses projekt gefunden.</p>";
-                    }
-                    return;
-                }
-
+            // NEU: Asynchrone Such-Schleife für massiv schnelleren Seitenaufbau
+            async function findAndLoadAllMedia() {
+                let imgIndex = 1;
+                let keepSearching = true;
                 const folderPath = `images/projekt${parseInt(currentProject.id)}/`;
-                const ext = extensionsToTry[extIndex];
-                const mediaUrl = `${folderPath}${imgIndex}${ext}`;
-                const isVideo = ext.toLowerCase() === '.mp4' || ext.toLowerCase() === '.mov';
-                
-                if (isVideo) {
-                    const testVid = document.createElement("video");
-                    
-                    testVid.onloadeddata = function() {
-                        addMediaToDOM(mediaUrl, 'video');
-                    };
-                    
-                    testVid.onerror = function() {
-                        autoLoadMedia(extIndex + 1);
-                    };
-                    
-                    testVid.src = mediaUrl;
-                    testVid.load(); 
+
+                while (keepSearching) {
+                    // Prüft alle Endungen auf einmal mit extrem schnellen HTTP-Headern
+                    const checkPromises = extensionsToTry.map(async (ext) => {
+                        const url = `${folderPath}${imgIndex}${ext}`;
+                        try {
+                            const response = await fetch(url, { method: 'HEAD' });
+                            if (response.ok) {
+                                return { url: url, ext: ext };
+                            }
+                        } catch (error) {
+                            return null;
+                        }
+                        return null;
+                    });
+
+                    const results = await Promise.all(checkPromises);
+                    const validFile = results.find(res => res !== null);
+
+                    if (validFile) {
+                        const isVideo = validFile.ext.toLowerCase() === '.mp4' || validFile.ext.toLowerCase() === '.mov';
+                        addMediaToDOM(validFile.url, isVideo ? 'video' : 'image', imgIndex - 1);
+                        imgIndex++;
+                    } else {
+                        keepSearching = false; 
+                    }
+                }
+
+                if (loadedMedia.length > 0) {
+                    initLightbox(loadedMedia);
                 } else {
-                    const testImg = new Image();
-                    
-                    testImg.onload = function() {
-                        addMediaToDOM(mediaUrl, 'image');
-                    };
-                    
-                    testImg.onerror = function() {
-                        autoLoadMedia(extIndex + 1);
-                    };
-                    
-                    testImg.src = mediaUrl;
+                    sliderEl.innerHTML = "<p>keine medien für dieses projekt gefunden.</p>";
                 }
             }
 
-            autoLoadMedia(0);
+            findAndLoadAllMedia();
 
         } else {
             titleEl.innerText = "project not found";
@@ -213,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- 4. Lightbox Logic (Mit Video & Sound) ---
+    // --- 4. Lightbox Logic ---
     function initLightbox(mediaArray) {
         const lightbox = document.getElementById("lightbox");
         if (!lightbox) return;
@@ -253,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 lightboxVid.volume = 0.8; 
                 
                 lightboxVid.play().catch(e => {
-                    console.log("Browser blockiert Autoplay. Nutzer muss manuell starten.");
+                    console.log("Autoplay blockiert.");
                 });
             }
         }
