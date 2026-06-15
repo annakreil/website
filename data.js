@@ -14,7 +14,7 @@ const projects = [
         roles: "visual direction | concept | art direction",
         text: "sensai, a luxury japanese cosmetics brand, draws inspiration from the elegance of japanese heritage. the shoot reflects the beauty of koishimaru silk, the soft, muted tones of traditional shoji screen dividers and the minimalist simplicity central to many japanese philosophies. at its core lies ma, the concept of the space in between, celebrating balance, harmony and the art of subtlety.",
         credits: "agentur loop. team: a. kreil, a. reterski, y. almhna, r. mayr, c. wileman, m. hübner",
-        cover: "images/projekt2/cover.png",
+        cover: "images/projekt2/cover.mp4",
         media: ["1.jpg", "2.jpg", "3.mp4", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg"]
     },
     {
@@ -41,7 +41,7 @@ const projects = [
         roles: "visual direction | concept | art direction",
         text: "the visual direction focused on a warm summer aesthetic, using golden-hour inspired lighting, soft contrasts and a tonal palette of earth shades. a reduced set design and calm compositions kept the focus on skin, product and texture.",
         credits: "agentur loop. team: a. kreil, r. mayr, y. almhna, r. christl, c. kollmann, s. pietsch, s. boric, l. schmid, a. wilcock",
-        cover: "images/projekt5/cover.mp4",
+        cover: "images/projekt5/cover.jpg",
         media: ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.mp4", "7.jpg", "8.jpg", "9.jpg"]
     },
     {
