@@ -23,7 +23,7 @@ const projects = [
         roles: "visual direction | art direction",
         text: "a finished watch hides almost everything about what makes it special. so we took it apart. shooting the chronograph as individual components, turned the construction itself into the subject. rather than showcasing the finished watch alone, the project explored the elegance hidden within its construction: engineering, design and detail become one.",
         credits: "agentur loop. team: a. kreil, m. john, g. tockner, a. lindmoser, s. gartler, n. höflmayer, t. schroll, l. scott",
-        cover: "images/projekt3/cover.mp4",
+        cover: "images/projekt3/cover.png",
         media: ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png"]
     },
     {
@@ -77,7 +77,7 @@ const projects = [
         roles: "visual direction | art direction",
         text: "created as a tribute to the legendary 1972 design, the campaign celebrates the porsche design chronograph 1 as the 911 among watches. as the first all-black chronograph on the market, the timepiece translated the performance-driven functionality of the porsche 911 cockpit: readable at a glance, nothing on the dial that doesn't need to be there. the campaign leans on that, treating the watch as part of porsche's design language rather than a separate thing wearing the badge.",
         credits: "agentur loop. team: a. kreil, m. john, g. tockner, a. lindmoser, s. gartler, n. höflmayer, l. scott, team standby: t. schroll",
-        cover: "images/projekt9/cover.jpg",
+        cover: "images/projekt9/cover.mp4",
         media: ["1.jpg", "2.mp4", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg"]
     },
     {
