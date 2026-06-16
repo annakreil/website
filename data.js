@@ -31,7 +31,7 @@ const projects = [
         name: "originale 11",
         roles: "visual direction | art direction",
         text: "the 11th edition of porsche originale features andrea vailetti, a milan-based photographer whose work is shaped by precision, patience and care. filmed in milan, the story reflects on the connection between photography and preservation, keeping moments, memories and porsche heritage alive through a passion for detail.",
-        credits: "agentur loop. team: a. kreil, l. scott, m. hübner, g. tockner, j. nowotny team standby: t. schroll",
+        credits: "agentur loop. team: a. kreil, l. scott, m. hübner, g. tockner, j. nowotny, team standby: t. schroll",
         cover: "images/projekt4/cover.mp4",
         media: ["1.png", "2.mp4", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"]
     },
@@ -47,7 +47,7 @@ const projects = [
     {
         id: "06",
         name: "apple computer × porsche",
-        roles: "art direction | visual direction",
+        roles: "visual direction",
         text: "reviving the apple computer livery first seen on the porsche 935 k3 at le mans in 1980, the collaboration brought a piece of motorsport history back to laguna seca. through a series of social activations, the campaign complemented a racing milestone with its story about heritage, creativity and the moments that connect generations.",
         credits: "agentur loop. team: a. kreil, c. o'brien, m. john, k. kester, b. szabo",
         cover: "images/projekt6/cover.mp4",
@@ -67,7 +67,7 @@ const projects = [
         name: "luftgekühlt",
         roles: "visual direction",
         text: "shot during luftgekühlt, the photo series uses tokyo's streets as part of the visual story. the focus was not only on porsche cars, but also on the feeling of the city at night. its lights, movement and atmosphere.",
-        credits: "agentur loop. team: a. kreil, l. scott",
+        credits: "agentur loop. team: a. kreil, l. scott, m. hübner, g. tockner, j. nowotny, team standby: t. schroll",
         cover: "images/projekt8/cover.jpg",
         media: ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg"]
     },
