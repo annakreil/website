@@ -146,15 +146,29 @@ document.addEventListener("DOMContentLoaded", () => {
             // Text-Block zusammenbauen
             let textHTML = currentProject.text ? `<div class="project-text">${currentProject.text}</div>` : '';
             
-            // Credits-Block mit Divider zusammenbauen
+            // Credits-Block und Roles mit Trennstrichen zusammenbauen
             let creditsHTML = '';
             if (currentProject.credits || currentProject.roles) {
-                creditsHTML = `
-                <hr class="project-divider">
-                <div class="project-meta">
+                let creditsPart = currentProject.credits ? `
                     <div class="meta-line meta-heading">credits</div>
                     <div class="meta-line">${currentProject.credits}</div>
+                ` : '';
+                
+                let rolesPart = currentProject.roles ? `
                     <div class="meta-line">${currentProject.roles}</div>
+                ` : '';
+
+                // Zweiter Strich nur, wenn beides (Credits und Roles) existiert
+                let middleDivider = (currentProject.credits && currentProject.roles) ? `<hr class="project-divider">` : '';
+
+                creditsHTML = `
+                <hr class="project-divider"> <!-- 1. Strich (unter Fließtext) -->
+                <div class="project-meta">
+                    ${creditsPart}
+                </div>
+                ${middleDivider}             <!-- 2. Strich (unter Credits) -->
+                <div class="project-meta">
+                    ${rolesPart}
                 </div>
                 `;
             }
@@ -162,8 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Ins HTML injizieren
             projectInfoContainer.innerHTML = `
                 <h1>${currentProject.name}</h1>
-                <hr class="project-divider"> ${textHTML}
-                ${creditsHTML}               `;
+                ${textHTML}
+                ${creditsHTML}
+            `;
             
             document.title = `${currentProject.name} — work by anna kreil`;
 
