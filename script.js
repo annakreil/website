@@ -162,9 +162,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Ins HTML injizieren
             projectInfoContainer.innerHTML = `
                 <h1>${currentProject.name}</h1>
-                ${textHTML}
-                ${creditsHTML}
-            `;
+                <hr class="project-divider"> ${textHTML}
+                ${creditsHTML}               `;
             
             document.title = `${currentProject.name} — work by anna kreil`;
 
