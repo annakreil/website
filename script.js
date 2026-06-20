@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pwSubmit = document.getElementById("pw-submit");
     const pwError = document.getElementById("pw-error");
 
-    const secretPassword = "anna"; 
+    const secretPassword = "2026"; 
 
     if (sessionStorage.getItem("siteUnlocked") === "true") {
         if(pwScreen) pwScreen.style.display = "none";
