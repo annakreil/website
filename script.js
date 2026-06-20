@@ -1,16 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
     
-    // --- 0. Password Protection ---
+    // --- 0. & 1. Synchronized Password & Opening Logic ---
     const pwScreen = document.getElementById("password-screen");
     const pwInput = document.getElementById("pw-input");
     const pwSubmit = document.getElementById("pw-submit");
     const pwError = document.getElementById("pw-error");
+    const openingScreen = document.getElementById("opening-screen");
+    const typeWriterEl = document.getElementById("typewriter-text");
 
     const secretPassword = "2026"; 
 
+    // Funktion, die die Typewriter-Animation steuert
+    function triggerOpeningLogic() {
+        if (openingScreen) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const navEntries = performance.getEntriesByType("navigation");
+            const isBackNavigation = navEntries.length > 0 && navEntries[0].type === "back_forward";
+            
+            // Wenn "skip" in der URL steht ODER der User den Zurück-Pfeil genutzt hat -> Intro überspringen
+            if (urlParams.get("hero") === "skip" || isBackNavigation) {
+                openingScreen.style.display = "none";
+            } else if (typeWriterEl) {
+                typeWriterEl.innerHTML = ""; // Sicherstellen, dass das Feld leer ist
+                const textToType = "work by anna kreil";
+                let i = 0;
+                
+                function typeWriter() {
+                    if (i < textToType.length) {
+                        const char = textToType.charAt(i);
+                        typeWriterEl.innerHTML += char;
+                        i++;
+                        setTimeout(typeWriter, 80); 
+                    } else {
+                        setTimeout(() => {
+                            openingScreen.classList.add("fade-out");
+                            setTimeout(() => {
+                                openingScreen.style.display = "none";
+                            }, 800); 
+                        }, 1200); 
+                    }
+                }
+                setTimeout(typeWriter, 100);
+            }
+        }
+    }
+
+    // Prüfen, ob der User schon einmal entsperrt hat (Session Storage)
     if (sessionStorage.getItem("siteUnlocked") === "true") {
         if(pwScreen) pwScreen.style.display = "none";
+        triggerOpeningLogic(); // Bereits entsperrt? Dann direkt Animation starten (oder skip prüfen)
     } else {
+        // Seite ist noch gesperrt -> Warte auf Passworteingabe
         if(pwSubmit) {
             pwSubmit.addEventListener("click", checkPassword);
             pwInput.addEventListener("keypress", (e) => {
@@ -22,45 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkPassword() {
         if (pwInput.value === secretPassword) {
             sessionStorage.setItem("siteUnlocked", "true");
-            if(pwScreen) pwScreen.style.display = "none";
+            if(pwScreen) pwScreen.style.display = "none"; // Passwort-Screen ausblenden
+            triggerOpeningLogic(); // Erst JETZT die Typewriter-Animation starten!
         } else {
             pwError.style.opacity = "1";
             setTimeout(() => pwError.style.opacity = "0", 2000);
-        }
-    }
-
-    // --- 1. Opening Screen & Typewriter Logic ---
-    const openingScreen = document.getElementById("opening-screen");
-    const typeWriterEl = document.getElementById("typewriter-text");
-
-    if (openingScreen) {
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        const navEntries = performance.getEntriesByType("navigation");
-        const isBackNavigation = navEntries.length > 0 && navEntries[0].type === "back_forward";
-        
-        if (urlParams.get("hero") === "skip" || isBackNavigation) {
-            openingScreen.style.display = "none";
-        } else if (typeWriterEl) {
-            const textToType = "work by anna kreil";
-            let i = 0;
-            
-            function typeWriter() {
-                if (i < textToType.length) {
-                    const char = textToType.charAt(i);
-                    typeWriterEl.innerHTML += char;
-                    i++;
-                    setTimeout(typeWriter, 80); 
-                } else {
-                    setTimeout(() => {
-                        openingScreen.classList.add("fade-out");
-                        setTimeout(() => {
-                            openingScreen.style.display = "none";
-                        }, 800); 
-                    }, 1200); 
-                }
-            }
-            setTimeout(typeWriter, 100);
         }
     }
 
@@ -84,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
             projectLink.appendChild(hoverTitle);
             projectGrid.appendChild(projectLink);
 
-            // Cover direkt laden (kein Suchen mehr nötig!)
             const isVideo = project.cover.toLowerCase().endsWith('.mp4') || project.cover.toLowerCase().endsWith('.mov');
             
             if (isVideo) {
@@ -103,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 imgWrapper.appendChild(coverImg);
             }
 
-            // Hover Preload für das allererste Projekt-Bild
             let preloaded = false;
             projectLink.addEventListener('mouseenter', () => {
                 if (preloaded || !project.media || project.media.length === 0) return;
@@ -143,10 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (currentProject) {
             
-            // Text-Block zusammenbauen
             let textHTML = currentProject.text ? `<div class="project-text">${currentProject.text}</div>` : '';
             
-            // Credits-Block und Roles mit Trennstrichen zusammenbauen
             let creditsHTML = '';
             if (currentProject.credits || currentProject.roles) {
                 let creditsPart = currentProject.credits ? `
@@ -158,22 +160,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="meta-line">${currentProject.roles}</div>
                 ` : '';
 
-                // Zweiter Strich nur, wenn beides (Credits und Roles) existiert
                 let middleDivider = (currentProject.credits && currentProject.roles) ? `<hr class="project-divider">` : '';
 
                 creditsHTML = `
-                <hr class="project-divider"> <!-- 1. Strich (unter Fließtext) -->
+                <hr class="project-divider"> 
                 <div class="project-meta">
                     ${creditsPart}
                 </div>
-                ${middleDivider}             <!-- 2. Strich (unter Credits) -->
+                ${middleDivider}             
                 <div class="project-meta">
                     ${rolesPart}
                 </div>
                 `;
             }
 
-            // Ins HTML injizieren
             projectInfoContainer.innerHTML = `
                 <h1>${currentProject.name}</h1>
                 ${textHTML}
@@ -193,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     let mediaEl;
                     if (!isVideo) {
                         mediaEl = document.createElement("img");
-                        // Smart Lazy Loading: Erste 2 Bilder sofort, den Rest asynchron
                         mediaEl.loading = index < 2 ? "eager" : "lazy"; 
                     } else {
                         mediaEl = document.createElement("video");
@@ -295,24 +294,5 @@ document.addEventListener("DOMContentLoaded", () => {
             evt.preventDefault(); 
             sliderWrapper.scrollLeft += evt.deltaY;
         }, { passive: false }); 
-    }
-
-    // --- 6. Contact Modal Pop-Up Logic ---
-    const contactTriggers = document.querySelectorAll('.contact-trigger');
-    const contactModal = document.getElementById('contact-modal');
-
-    if (contactModal) {
-        contactTriggers.forEach(trigger => {
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault(); 
-                contactModal.classList.add('show');
-            });
-        });
-
-        contactModal.addEventListener('click', (e) => {
-            if (e.target === contactModal) {
-                contactModal.classList.remove('show');
-            }
-        });
     }
 });
